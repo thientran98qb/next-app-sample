@@ -1,38 +1,128 @@
-import React from 'react';
-import IButton from '../Button';
+import { useState, useEffect } from "react";
+import {
+  Navbar,
+  MobileNav,
+  Typography,
+  Button,
+  IconButton,
+} from "@material-tailwind/react";
+import { useRouter } from "next/router";
 
-type Props = {};
+export default function Header() {
+  const router = useRouter()
+  const [openNav, setOpenNav] = useState(false);
 
-const Header = (props: Props) => {
-  return (
-    <nav className="w-full shadow">
-      <div className="w-full container mx-auto md:px-1 flex items-center justify-between h-[50px]">
-        <div className="flex items-center gap-1 cursor-pointer">
-          <img className="w-100 h-[50px]" src="/images/logoo.svg" alt="" />
-          <span className="text-[13px] uppercase py-1 border border-dashed flex items-center flex-nowrap">
-            Thien <i className="bg-black text-white p-1 uppercase">Studio</i>
-          </span>
-        </div>
-        <div className="header-menu-list">
-          <ul className="flex items-center gap-5">
-            <li>
-              <a href="">Docs</a>
-            </li>
-            <li>
-              <a href="">Blog</a>
-            </li>
-            <li>
-              <a href="">Porpolio</a>
-            </li>
-          </ul>
-        </div>
-        <div className="header-options--auth flex gap-3">
-          <IButton>Login</IButton>
-          <IButton color="primary">Register</IButton>
-        </div>
-      </div>
-    </nav>
+  useEffect(() => {
+    window.addEventListener(
+      "resize",
+      () => window.innerWidth >= 960 && setOpenNav(false)
+    );
+  }, []);
+
+  const navList = (
+    <ul className="mb-4 mt-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
+      <Typography
+        as="li"
+        variant="small"
+        color="blue-gray"
+        className="p-1 font-normal"
+      >
+        <a href="#" className="flex items-center">
+          Pages
+        </a>
+      </Typography>
+      <Typography
+        as="li"
+        variant="small"
+        color="blue-gray"
+        className="p-1 font-normal"
+      >
+        <a href="#" className="flex items-center">
+          Account
+        </a>
+      </Typography>
+      <Typography
+        as="li"
+        variant="small"
+        color="blue-gray"
+        className="p-1 font-normal"
+      >
+        <a href="#" className="flex items-center">
+          Blocks
+        </a>
+      </Typography>
+      <Typography
+        as="li"
+        variant="small"
+        color="blue-gray"
+        className="p-1 font-normal"
+      >
+        <a href="#" className="flex items-center">
+          Docs
+        </a>
+      </Typography>
+    </ul>
   );
-};
 
-export default Header;
+  return (
+    <Navbar className="w-full max-w-none rounded-none py-2 px-4 lg:px-8 lg:py-4">
+      <div className="container mx-auto w-full flex items-center justify-between text-blue-gray-900">
+        <Typography
+          as="a"
+          href="/"
+          variant="small"
+          className="mr-4 cursor-pointer py-1.5 font-normal"
+        >
+          <span>Material Tailwind</span>
+        </Typography>
+        <div className="hidden lg:block">{navList}</div>
+        <Button variant="gradient" size="sm" className="hidden lg:inline-block">
+          <span onClick={() => router.push('/login')}>Login</span>
+        </Button>
+        <IconButton
+          variant="text"
+          className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
+          ripple={false}
+          onClick={() => setOpenNav(!openNav)}
+        >
+          {openNav ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              className="h-6 w-6"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          )}
+        </IconButton>
+      </div>
+      <MobileNav open={openNav}>
+        {navList}
+        <Button variant="gradient" size="sm" fullWidth className="mb-2">
+          <span>Login</span>
+        </Button>
+      </MobileNav>
+    </Navbar>
+  );
+}

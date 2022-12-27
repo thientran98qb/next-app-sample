@@ -1,11 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Credentials from '../components/Credentials'
-import { getPosts } from '../services'
+import { getCsrfToken, getProviders, useSession } from 'next-auth/react'
+import Router from 'next/router'
 
-type Props = {}
+const Login = ({provider, csrfToken}: any) => {
+  const { data: session } = useSession()
 
-const Login = (props: Props) => {
-  console.log(props);
+  useEffect(() => {
+    if (session) Router.push('/');
+
+  }, [session]);
 
   return (
     <div className='bg-gray-50 flex-col justify-center py-12 lg:px-8'>
@@ -15,18 +19,20 @@ const Login = (props: Props) => {
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <Credentials providers={'123'} csrfToken={'123'} />
+          <Credentials provider={provider.credentials} csrfToken={csrfToken} />
         </div>
       </div>
     </div>
   )
 }
 
+export async function getServerSideProps(context: any) {
+  return {
+    props: {
+      provider: await getProviders(),
+      csrfToken: await getCsrfToken(context)
+    }
+  }
+}
 export default Login
 
-export async function getStaticProps() {
-    const posts = await getPosts() || []
-    return {
-      props: { posts }
-    }
-}

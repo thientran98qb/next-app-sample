@@ -11,25 +11,26 @@ export default NextAuth({
       // e.g. domain, username, password, 2FA token, etc.
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        username: { label: "email", type: "email", placeholder: "jsmith" },
         password: {  label: "Password", type: "password" }
       },
       async authorize(credentials: any, req: any) {
-        // You need to provide your own logic here that takes the credentials
-        // submitted and returns either a object representing a user or value
-        // that is false/null if the credentials are invalid.
-        // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
-        // You can also use the `req` object to obtain additional parameters
-        // (i.e., the request IP address)
-        const res = await fetch("/your/endpoint", {
+        const payload = {
+          email: credentials.email,
+          password: credentials.password,
+        };
+        const res = await fetch("http://localhost:86/api/auth/login", {
           method: 'POST',
-          body: JSON.stringify(credentials),
+          body: JSON.stringify(payload),
           headers: { "Content-Type": "application/json" }
         })
         const user = await res.json()
 
         // If no error and we have user data, return it
-        if (res.ok && user) {
+        if (!res.ok || !user.user) {
+          throw new Error('User not found');
+        }
+        if (res.ok && user.user) {
           return user
         }
         // Return null if user data could not be retrieved
@@ -51,6 +52,7 @@ export default NextAuth({
     strategy: 'jwt'
   },
   pages: {
-    signIn: "/login", //Need to define custom login page (if using)
+    signIn: '/login',
+    error: '/login',
   },
 });
