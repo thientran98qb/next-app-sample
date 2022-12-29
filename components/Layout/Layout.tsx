@@ -9,7 +9,9 @@ const Layout = ({ children }: IProps) => {
   return (
     <>
       <Header />
-      {children}
+      <div className='container mx-auto py-2'>
+        {children}
+      </div>
     </>
   );
 };

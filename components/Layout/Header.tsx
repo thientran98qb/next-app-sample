@@ -5,12 +5,18 @@ import {
   Typography,
   Button,
   IconButton,
+  Avatar,
 } from "@material-tailwind/react";
+import logo from '../../public/images/logoo.svg'
 import { useRouter } from "next/router";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 export default function Header() {
   const router = useRouter()
   const [openNav, setOpenNav] = useState(false);
+  const { data: session } = useSession()
 
   useEffect(() => {
     window.addEventListener(
@@ -25,27 +31,27 @@ export default function Header() {
         as="li"
         variant="small"
         color="blue-gray"
-        className="p-1 font-normal"
+        className="p-1 font-bold text-md hover:underline transition-all"
       >
-        <a href="#" className="flex items-center">
-          Pages
-        </a>
+        <Link href="/quizz" className="flex items-center">
+          Quizz
+        </Link>
       </Typography>
       <Typography
         as="li"
         variant="small"
         color="blue-gray"
-        className="p-1 font-normal"
+        className="p-1 font-bold text-md hover:underline transition-all"
       >
-        <a href="#" className="flex items-center">
+        <Link href="/profile" className="flex items-center">
           Account
-        </a>
+        </Link>
       </Typography>
       <Typography
         as="li"
         variant="small"
         color="blue-gray"
-        className="p-1 font-normal"
+        className="p-1 font-bold text-md hover:underline transition-all"
       >
         <a href="#" className="flex items-center">
           Blocks
@@ -55,7 +61,7 @@ export default function Header() {
         as="li"
         variant="small"
         color="blue-gray"
-        className="p-1 font-normal"
+        className="p-1 font-bold text-md hover:underline transition-all"
       >
         <a href="#" className="flex items-center">
           Docs
@@ -73,12 +79,31 @@ export default function Header() {
           variant="small"
           className="mr-4 cursor-pointer py-1.5 font-normal"
         >
-          <span>Material Tailwind</span>
+          <div className="flex items-center">
+            <Image
+              src={logo}
+              alt="logo"
+              width={30}
+              height={30}
+            />
+            <span className="uppercase text-lg bg-black text-white p-[2px] rounded">Thien <span className="text-sm underline font-bold">Dev</span></span>
+          </div>
         </Typography>
         <div className="hidden lg:block">{navList}</div>
-        <Button variant="gradient" size="sm" className="hidden lg:inline-block">
-          <span onClick={() => router.push('/login')}>Login</span>
-        </Button>
+        <div className="flex gap-2">
+          {session ?
+            <Avatar src="https://www.material-tailwind.com/img/face-2.jpg" alt="avatar"/>
+            :
+            <>
+              <Button variant="gradient" size="sm" className="hidden lg:inline-block">
+                <Link href="/login">Login</Link>
+              </Button>
+              <Button variant="outlined" size="sm" className="hidden lg:inline-block">
+                <span onClick={() => router.push('/register')}>Register</span>
+              </Button>
+            </>
+          }
+        </div>
         <IconButton
           variant="text"
           className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
@@ -121,6 +146,9 @@ export default function Header() {
         {navList}
         <Button variant="gradient" size="sm" fullWidth className="mb-2">
           <span>Login</span>
+        </Button>
+        <Button variant="outlined" size="sm" fullWidth className="mb-2">
+          <span>Register</span>
         </Button>
       </MobileNav>
     </Navbar>

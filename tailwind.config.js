@@ -8,7 +8,16 @@ module.exports = withMT({
   ],
   theme: {
     extend: {},
+    screens: {
+      'sm': {
+        'max': '450px'
+      },
+      'md': {
+        'max': '640px'
+      }
+    },
   },
+
   plugins: [],
   corePlugins: {
     // preflight: false,
