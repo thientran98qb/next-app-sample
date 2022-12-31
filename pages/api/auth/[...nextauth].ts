@@ -1,3 +1,4 @@
+import axios from "axios";
 import NextAuth from "next-auth";
 import CredentialsProvider  from "next-auth/providers/credentials";
 
@@ -40,8 +41,15 @@ export default NextAuth({
   ],
   callbacks: {
     jwt: async ({ token, user }) => {
-      user && (token.user = user);
-      return token;
+      if (user) {
+        token.user = user
+      }
+
+      if (Date.now() < new Date(token.user.expires_in).getTime()) {
+        return token;
+      }
+
+      return refreshAccessToken(token);
     },
     session: async ({ session, token }: any) => {
       session.user = token.user;  // Setting token in session
@@ -54,5 +62,44 @@ export default NextAuth({
   pages: {
     signIn: '/login',
     error: '/login',
+    signOut: '/login'
   },
 });
+
+async function refreshAccessToken(token: any) {
+  if (token.user.access_token) {
+    try {
+      const response = await axios.post(
+        process.env.NEXT_PUBLIC_ENPOINT_API + '/auth/refresh', [],
+        {
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${token.user.access_token}`
+        } },
+      );
+
+      const refreshedTokens = response.data;
+      console.log('statuusss', response.status);
+
+      if (response.status !== 200) {
+        throw refreshedTokens;
+      }
+
+
+      return {
+        ...token,
+        user: {
+          ...token.user,
+          access_token: refreshedTokens.access_token,
+          expires_in: refreshedTokens.expires_in
+        }
+      }
+    } catch (error) {
+      console.error('RefreshAccessTokenError', error);
+      return {
+        ...token,
+        error: 'RefreshAccessTokenError',
+      };
+    }
+  }
+}

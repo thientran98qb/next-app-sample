@@ -28,10 +28,11 @@ const Credentials = ({provider, csrfToken}: IProps) => {
   const { register, handleSubmit, formState } = useForm<FormValues>(formOptions)
   const { errors } = formState
   const onSubmit: SubmitHandler<FormValues> = async(data) => {
-    setLoading(true)
+    // setLoading(true)
     const res = await signIn(provider.id, {
       email: data.email,
       password: data.password,
+      callbackUrl: `/`,
       redirect: false
     })
     if (provider.id === 'credentials') {
@@ -40,7 +41,8 @@ const Credentials = ({provider, csrfToken}: IProps) => {
         return toast(res?.error)
       }
       setLoading(false)
-      return router.push("/");
+
+      return window.location.replace(res?.url || '/')
     }
   };
   return (

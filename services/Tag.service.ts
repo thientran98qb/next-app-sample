@@ -6,8 +6,7 @@ export default {
       const response = await apiIns.get('/tags');
       return response
     } catch (error) {
-      console.log(error);
-
+      console.log(error)
     }
   }
 }
