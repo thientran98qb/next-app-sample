@@ -1,16 +1,11 @@
 import axios from "axios";
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider  from "next-auth/providers/credentials";
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider ({
-      // The name to display on the sign in form (e.g. 'Sign in with...')
       name: 'Credentials',
-      // The credentials is used to generate a suitable form on the sign in page.
-      // You can specify whatever fields you are expecting to be submitted.
-      // e.g. domain, username, password, 2FA token, etc.
-      // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
         username: { label: "email", type: "email", placeholder: "jsmith" },
         password: {  label: "Password", type: "password" }
@@ -32,7 +27,13 @@ export default NextAuth({
           throw new Error('User not found');
         }
         if (res.ok && user.user) {
-          return user
+          return {
+            id: user.user?.id,
+            access_token: user.access_token,
+            expires_in: user.expires_in,
+            name: user.user?.name,
+            email: user.user?.email
+          }
         }
         // Return null if user data could not be retrieved
         return null
@@ -40,7 +41,7 @@ export default NextAuth({
     })
   ],
   callbacks: {
-    jwt: async ({ token, user }) => {
+    jwt: async ({ token, user }: any) => {
       if (user) {
         token.user = user
       }
@@ -64,7 +65,7 @@ export default NextAuth({
     error: '/login',
     signOut: '/login'
   },
-});
+};
 
 async function refreshAccessToken(token: any) {
   if (token.user.access_token) {
@@ -103,3 +104,4 @@ async function refreshAccessToken(token: any) {
     }
   }
 }
+export default NextAuth(authOptions);

@@ -17,8 +17,8 @@ const Login = ({provider, csrfToken}: any) => {
         <h2 className='text-center text-3xl mt-6 m-0 font-extrabold text-gray-900'>Sign In</h2>
         <p className='mt-2 text-center text-gray-600'>Welcome back website!</p>
       </div>
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md p-3">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md p-3 lg:mx-auto lg:w-2/4">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg lg:px-10">
           <Credentials provider={provider.credentials} csrfToken={csrfToken} />
         </div>
       </div>

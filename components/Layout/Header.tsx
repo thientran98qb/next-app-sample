@@ -10,7 +10,7 @@ import {
 import logo from '../../public/images/logoo.svg'
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 
 export default function Header() {
@@ -75,9 +75,9 @@ export default function Header() {
       <div className="container mx-auto w-full flex items-center justify-between text-blue-gray-900">
         <Typography
           as="a"
-          href="/"
           variant="small"
           className="mr-4 cursor-pointer py-1.5 font-normal"
+          onClick={() => router.push('/')}
         >
           <div className="flex items-center">
             <Image
@@ -90,19 +90,30 @@ export default function Header() {
           </div>
         </Typography>
         <div className="hidden lg:block">{navList}</div>
-        <div className="flex gap-2">
-          {session ?
-            <Avatar src="https://www.material-tailwind.com/img/face-2.jpg" alt="avatar"/>
-            :
-            <>
-              <Button variant="gradient" size="sm" className="hidden lg:inline-block">
-                <Link href="/login">Login</Link>
-              </Button>
-              <Button variant="outlined" size="sm" className="hidden lg:inline-block">
-                <span onClick={() => router.push('/register')}>Register</span>
-              </Button>
-            </>
-          }
+        <div className="hidden lg:block">
+          <div className="flex gap-2">
+            {session?.user ?
+              <div className="flex items-center gap-2">
+                <Avatar src="https://www.material-tailwind.com/img/face-2.jpg" alt="avatar"/>
+                <div>
+                  <Typography>{ session.user.name }</Typography>
+                  <span className="underline uppercase font-bold cursor-pointer hover:opacity-90" onClick={() => signOut({callbackUrl: '/'})}>Logout</span>
+                </div>
+              </div>
+              :
+              <>
+                <Link href="/login">
+                  <Button variant="gradient" size="sm" className="hidden lg:inline-block">
+                    Login
+                  </Button>
+                </Link>
+
+                <Button variant="outlined" size="sm" className="hidden lg:inline-block">
+                  <span onClick={() => router.push('/register')}>Register</span>
+                </Button>
+              </>
+            }
+          </div>
         </div>
         <IconButton
           variant="text"
@@ -144,12 +155,19 @@ export default function Header() {
       </div>
       <MobileNav open={openNav}>
         {navList}
-        <Button variant="gradient" size="sm" fullWidth className="mb-2">
-          <span>Login</span>
-        </Button>
-        <Button variant="outlined" size="sm" fullWidth className="mb-2">
-          <span>Register</span>
-        </Button>
+        {session?.user ?
+          <Button variant="outlined" size="sm" onClick={() => signOut({callbackUrl: '/'})} fullWidth className="mb-2">
+            <span>Logout</span>
+          </Button> :
+          <>
+            <Button variant="gradient" size="sm" fullWidth className="mb-2">
+              <span>Login</span>
+            </Button>
+            <Button variant="outlined" size="sm" fullWidth className="mb-2">
+              <span>Register</span>
+            </Button>
+          </>
+        }
       </MobileNav>
     </Navbar>
   );

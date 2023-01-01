@@ -5,6 +5,7 @@ import * as Yup from 'yup'
 import { signIn } from "next-auth/react"
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
+import { CircularProgress } from '@mui/material';
 
 interface IProps {
   provider: any,
@@ -28,7 +29,7 @@ const Credentials = ({provider, csrfToken}: IProps) => {
   const { register, handleSubmit, formState } = useForm<FormValues>(formOptions)
   const { errors } = formState
   const onSubmit: SubmitHandler<FormValues> = async(data) => {
-    // setLoading(true)
+    setLoading(true)
     const res = await signIn(provider.id, {
       email: data.email,
       password: data.password,
@@ -69,7 +70,7 @@ const Credentials = ({provider, csrfToken}: IProps) => {
         <p className='m-0 pt-2 text-red-500 font-bold text-sm'>{errors.password?.message}</p>
       </div>
       <button className='mt-8 w-full cursor-pointer border hover:bg-gray-100 rounded outline-none border-solid border-gray-500 shadow bg-white my-2 py-3' type="submit">
-        {loading ? '...loading' : "Sign in with Email & Password"}
+        {loading ? <CircularProgress size="10px" color="success" /> : "Sign in with Email & Password"}
       </button>
     </form>
   )

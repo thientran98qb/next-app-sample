@@ -4,6 +4,8 @@ import { tagService } from '../../services'
 import apiIns from '../../services/API.service'
 import { useSession } from 'next-auth/react'
 import Router, { useRouter } from 'next/router'
+import { authOptions } from '../../pages/api/auth/[...nextauth]'
+import { unstable_getServerSession } from "next-auth/next"
 
 type Props = {}
 
@@ -22,9 +24,9 @@ const Quizz = (props: Props) => {
   }, [])
   return (
     <div className='py-5'>
-      <Typography className="font-bold text-center text-[30px] uppercase leading-loose tracking-widest">Quizz Lists</Typography>
-      <div className='grid grid-cols-3 gap-5'>
+      <div className='grid grid-cols-3 gap-5 sm:grid-cols-1 sm:gap-0 sm:p-2'>
         <div className="col-span-2">
+          <Typography className="font-bold text-center text-[30px] uppercase leading-loose tracking-widest underline pb-2">Quizz Lists</Typography>
           <div className='bg-slate-300 border border-blue-gray-200 rounded shadow mb-5'>
             <div className='p-5'>
               <p className='leading-5 tracking-normal pb-3'>
@@ -33,7 +35,7 @@ const Quizz = (props: Props) => {
                 </span>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam ad perspiciatis atque ex quidem iure obcaecati. Laboriosam dolore blanditiis aut odio ratione alias, fugiat voluptate illum maiores sed laudantium? Expedita.
               </p>
-              <div className='flex gap-1'>
+              <div className='flex gap-1 flex-wrap'>
                 <span className='bg-blue-600 border rounded-2xl py-1 px-3 text-white shadow'>#Edu</span>
                 <span className='bg-red-600 border rounded-2xl py-1 px-3 text-white shadow'>#Edi</span>
                 <span className='bg-blue-600 border rounded-2xl py-1 px-3 text-white shadow'>#Js</span>
@@ -49,7 +51,7 @@ const Quizz = (props: Props) => {
                 </span>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam ad perspiciatis atque ex quidem iure obcaecati. Laboriosam dolore blanditiis aut odio ratione alias, fugiat voluptate illum maiores sed laudantium? Expedita.
               </p>
-              <div className='flex gap-1'>
+              <div className='flex gap-1 flex-wrap'>
                 <span className='bg-blue-600 border rounded-2xl py-1 px-3 text-white shadow'>#Edu</span>
                 <span className='bg-red-600 border rounded-2xl py-1 px-3 text-white shadow'>#Edi</span>
                 <span className='bg-blue-600 border rounded-2xl py-1 px-3 text-white shadow'>#Js</span>
@@ -65,7 +67,7 @@ const Quizz = (props: Props) => {
                 </span>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam ad perspiciatis atque ex quidem iure obcaecati. Laboriosam dolore blanditiis aut odio ratione alias, fugiat voluptate illum maiores sed laudantium? Expedita.
               </p>
-              <div className='flex gap-1'>
+              <div className='flex gap-1 flex-wrap'>
                 <span className='bg-blue-600 border rounded-2xl py-1 px-3 text-white shadow'>#Edu</span>
                 <span className='bg-red-600 border rounded-2xl py-1 px-3 text-white shadow'>#Edi</span>
                 <span className='bg-blue-600 border rounded-2xl py-1 px-3 text-white shadow'>#Js</span>
@@ -74,10 +76,10 @@ const Quizz = (props: Props) => {
             </div>
           </div>
         </div>
-        <div>
-          <div className='bg-slate-300 border rounded shadow mb-5 border-blue-gray-200'>
+        <div className='sm:order-first'>
+          <Typography className="font-bold text-center text-[30px] uppercase leading-loose tracking-widest underline pb-2">Tag Listss</Typography>
+          <div className='bg-slate-300 border rounded shadow mb-5 border-blue-gray-200 p-2 w-full'>
             <div className='p-3'>
-              <Typography className="font-bold underline text-[30px] py-2 tracking-wider">Tag Listss</Typography>
               <div className='flex gap-1 flex-wrap'>
                 {tags && tags.map((tag: Tag, index: number)=> (
                   <span key={index} className='bg-blue-600 border rounded-2xl py-1 px-3 text-white shadow'>#{tag.name}</span>
@@ -101,3 +103,22 @@ const Quizz = (props: Props) => {
 }
 
 export default Quizz
+
+export async function getServerSideProps(context: any) {
+  const session = await unstable_getServerSession(context.req, context.res, authOptions)
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: {
+      session,
+    },
+  }
+}

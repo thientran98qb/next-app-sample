@@ -1,4 +1,5 @@
 import NextAuth, { DefaultSession } from "next-auth"
+import UserType from "./user-type"
 
 declare module "next-auth" {
   /**
@@ -8,7 +9,10 @@ declare module "next-auth" {
     user: {
       /** The user's postal address. */
       access_token: string,
-      expires_in: number
+      expires_in: number,
+      id: number,
+      email: string,
+      name: string
     } & DefaultSession["user"]
   }
 }
