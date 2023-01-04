@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react'
 import Router, { useRouter } from 'next/router'
 import { authOptions } from '../../pages/api/auth/[...nextauth]'
 import { unstable_getServerSession } from "next-auth/next"
+import { requiredAuthentication } from '../../utils/requiredAuthentication'
 
 type Props = {}
 
@@ -101,24 +102,14 @@ const Quizz = (props: Props) => {
     </div>
   )
 }
+export async function getServerSideProps(context: any) {
+  return requiredAuthentication(context, ({session}: any) => {
+    return {
+      props: {
+        session
+      }
+    }
+  })
+}
 
 export default Quizz
-
-export async function getServerSideProps(context: any) {
-  const session = await unstable_getServerSession(context.req, context.res, authOptions)
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    }
-  }
-
-  return {
-    props: {
-      session,
-    },
-  }
-}

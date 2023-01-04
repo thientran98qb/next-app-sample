@@ -1,10 +1,7 @@
 import { Button, Input, Typography } from '@material-tailwind/react'
-import { Pagination } from '@mui/material'
-import React from 'react'
+import { memo } from 'react'
 
-type Props = {}
-
-const Profile = (props: Props) => {
+const ProfileView = ({}) => {
   return (
     <div className='max-w-xl mx-auto py-10'>
       <Typography className="text-center font-bold uppercase text-[25px] tracking-wider leading-4 mb-9">Profile User</Typography>
@@ -33,5 +30,4 @@ const Profile = (props: Props) => {
     </div>
   )
 }
-
-export default Profile
+export default memo(ProfileView)
